@@ -31,8 +31,13 @@ class productService {
         }
     }
 
-    public static async addProduct(product: Product) {
+    public static async addProduct(product: Product, file: Express.Multer.File) {
+        const urlProject = process.env.URL;
+        const portProject = process.env.PORT;
       try {
+        
+        product.url = `${urlProject}:${portProject}/uploads/${file.filename}`;
+
           if (!product.created_at) {
               product.created_at = DateUtils.formatDate(new Date());
           }

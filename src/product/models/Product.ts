@@ -10,6 +10,7 @@ export interface Product {
     dose: string;
     type: string;
     uso: string;
+    url: string;
     created_at: string;
     created_by: string;
     updated_at: string;

@@ -1,15 +1,14 @@
 import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import * as dotenv from 'dotenv';
+import path from 'path'
 
 // Importar rutas de módulos
 import employeeRoutes from './employee/routes/employeeRoutes';
 import productRoutes from './product/routes/productRoutes';
 import clienteRoutes from './cliente/routes/clienteRoutes';
-import cartItemRoutes from './cartItem/routes/cartItemRoutes';
-import cartRoutes from './cart/routes/cartRoutes';
-import saleRoutes from './sales/routes/salesRoutes';
-import voucherRoutes from './voucher/routes/voucherRoutes';
+import cartItemRoutes from './cartItem/routes/cartItemRoutes'; // Importar rutas de cartItem
+import cartRoutes from './cart/routes/cartRoutes';// Importar rutas de cart
 
 // Importar middlewares compartidos
 import { errorHandler } from './shared/middlewares/errorHandler';
@@ -30,16 +29,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/employee', employeeRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/client', clienteRoutes);
-app.use('/api/cartItem', cartItemRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/sale', saleRoutes);
-app.use('/api/voucher', voucherRoutes);
+app.use('/api/cartItem', cartItemRoutes); // Agregar rutas de cartItem
+app.use('/api/cart', cartRoutes); // Agregar rutas de cart
 
 // Middleware para manejar rutas no encontradas
 app.use(notFoundHandler);
 
 // Middleware de manejo de errores
 app.use(errorHandler);
+
+// Ruta que usarán para acceder a las imágenes //////ruta de donde se sacarán las imágenes
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Iniciar el servidor
 app.listen(port, () => {

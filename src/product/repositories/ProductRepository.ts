@@ -53,13 +53,14 @@ export class ProductRepository {
   }
 
   public static async createProduct(product: Product): Promise<Product> {
-    const query = 'INSERT INTO products (stock, name, price, created_at, created_by) VALUES (?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO products (stock, name, price, url, created_at, created_by) VALUES (?, ?, ?, ?, ?, ?)';
     return new Promise((resolve, reject) => {
       const createdAt = DateUtils.formatDate(new Date()); 
       connection.execute(query, [
         product.stock, 
         product.name, 
         product.price,
+        product.url,
         createdAt, 
         product.created_by
       ], (error, result: ResultSetHeader) => {
