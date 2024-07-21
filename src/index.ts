@@ -6,8 +6,10 @@ import * as dotenv from 'dotenv';
 import employeeRoutes from './employee/routes/employeeRoutes';
 import productRoutes from './product/routes/productRoutes';
 import clienteRoutes from './cliente/routes/clienteRoutes';
-import cartItemRoutes from './cartItem/routes/cartItemRoutes'; // Importar rutas de cartItem
-import cartRoutes from './cart/routes/cartRoutes';// Importar rutas de cart
+import cartItemRoutes from './cartItem/routes/cartItemRoutes';
+import cartRoutes from './cart/routes/cartRoutes';
+import saleRoutes from './sales/routes/salesRoutes';
+import voucherRoutes from './voucher/routes/voucherRoutes';
 
 // Importar middlewares compartidos
 import { errorHandler } from './shared/middlewares/errorHandler';
@@ -28,8 +30,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/employee', employeeRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/client', clienteRoutes);
-app.use('/api/cartItem', cartItemRoutes); // Agregar rutas de cartItem
-app.use('/api/cart', cartRoutes); // Agregar rutas de cart
+app.use('/api/cartItem', cartItemRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/sale', saleRoutes);
+app.use('/api/voucher', voucherRoutes);
 
 // Middleware para manejar rutas no encontradas
 app.use(notFoundHandler);
