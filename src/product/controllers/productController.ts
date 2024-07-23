@@ -35,12 +35,12 @@ export const createProduct = async (req: Request, res: Response) => {
     if (!stock || !name || !price || !created_by) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
-    
+    /*
     if (!req.file) {
       return res.status(400).send('No file uploaded.');
     }
-    
-    const newProduct = await productService.addProduct(req.body, req.file);
+    */
+    const newProduct = await productService.addProduct(req.body);
     res.status(201).json(newProduct);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
