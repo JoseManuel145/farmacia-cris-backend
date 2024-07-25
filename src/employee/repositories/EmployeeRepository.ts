@@ -73,15 +73,16 @@ export class EmployeeRepository {
 
   public static async updateEmployee(employee_id: number, employeeData: Employee): Promise<Employee | null> {
     const query = 'UPDATE employee SET full_name = ?, password = ?, salary = ?, position = ?, updated_at = ?, updated_by = ?, deleted = ? WHERE employee_id = ?';
+    
     return new Promise((resolve, reject) => {
       connection.execute(query, [
-        employeeData.full_name, 
-        employeeData.password, 
-        employeeData.salary,
-        employeeData.position,
-        employeeData.updated_at, 
-        employeeData.updated_by, 
-        employeeData.deleted, 
+        employeeData.full_name ?? null, // Use null if undefined
+        employeeData.password ?? null,
+        employeeData.salary ?? null,
+        employeeData.position ?? null,
+        employeeData.updated_at ?? null,
+        employeeData.updated_by ?? null,
+        employeeData.deleted ?? null,
         employee_id
       ], (error, result: ResultSetHeader) => {
         if (error) {

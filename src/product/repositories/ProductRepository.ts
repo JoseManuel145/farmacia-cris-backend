@@ -35,9 +35,9 @@ export class ProductRepository {
     });
   }
 
-  public static async findByName(nombre: string): Promise<Product | null> {
+  public static async findByName(name: string): Promise<Product | null> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM products WHERE nombre = ?', [nombre], (error: any, results) => {
+      connection.query('SELECT * FROM products WHERE name = ?', [name], (error: any, results) => {
         if (error) {
           reject(error);
         } else {
@@ -53,35 +53,48 @@ export class ProductRepository {
   }
 
   public static async createProduct(product: Product): Promise<Product> {
-    const query = 'INSERT INTO products (stock, name, price, created_at, created_by) VALUES (?, ?, ?, ?, ?)';
+    const query = `
+      INSERT INTO products (stock, name, price, description, formula, secundary_effects, caducity, dose, type, uso, url, created_at, created_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
     return new Promise((resolve, reject) => {
-      const createdAt = DateUtils.formatDate(new Date()); 
+      const createdAt = DateUtils.formatDate(new Date());
       connection.execute(query, [
-        product.stock, 
-        product.name, 
+        product.stock,
+        product.name,
         product.price,
-        createdAt, 
+        product.description || '',  // Asegurar que no haya valores undefined
+        product.formula || '',
+        product.secundary_effects || '',
+        product.caducity || '',
+        product.dose || '',
+        product.type || '',
+        product.uso || '',
+        product.url || '',  // Imagen en base64
+        createdAt,
         product.created_by
       ], (error, result: ResultSetHeader) => {
         if (error) {
           reject(error);
         } else {
           const createdProductId = result.insertId;
-          const createdProduct: Product = { ...product, id: createdProductId, created_at: createdAt }; // Incluir created_at en el objeto creado
+          const createdProduct: Product = { ...product, id: createdProductId, created_at: createdAt };
           resolve(createdProduct);
         }
       });
     });
-}
-
-
+  }
 
   public static async updateProduct(product_id: number, productData: Product): Promise<Product | null> {
-    const query = 'UPDATE products SET stock = ?, name = ?, price = ?, description = ?, formula = ?, secundary_effects = ?, caducity = ?, dose = ?, type = ?, uso = ?, updated_at = ?, updated_by = ? WHERE id = ?';
+    const query = `
+      UPDATE products SET stock = ?, name = ?, price = ?, description = ?, formula = ?, secundary_effects = ?, caducity = ?, dose = ?, type = ?, uso = ?, url = ?, updated_at = ?, updated_by = ?
+      WHERE id = ?
+    `;
     return new Promise((resolve, reject) => {
+      const updatedAt = DateUtils.formatDate(new Date());
       connection.execute(query, [
-        productData.stock, 
-        productData.name, 
+        productData.stock,
+        productData.name,
         productData.price,
         productData.description,
         productData.formula,
@@ -90,17 +103,16 @@ export class ProductRepository {
         productData.dose,
         productData.type,
         productData.uso,
-        productData.updated_at, 
-        productData.updated_by, 
-        productData.deleted, 
+        productData.url,
+        updatedAt,
+        productData.updated_by,
         product_id
       ], (error, result: ResultSetHeader) => {
         if (error) {
           reject(error);
         } else {
           if (result.affectedRows > 0) {
-            const updatedProduct: Product = { ...productData, id: product_id };
-            resolve(updatedProduct);
+            resolve(productData);
           } else {
             resolve(null);
           }
@@ -117,9 +129,9 @@ export class ProductRepository {
           reject(error);
         } else {
           if (result.affectedRows > 0) {
-            resolve(true); // Eliminación exitosa
+            resolve(true);
           } else {
-            resolve(false); // Si no se encontró el producto a eliminar
+            resolve(false);
           }
         }
       });
