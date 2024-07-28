@@ -7,7 +7,7 @@ export class ProductRepository {
 
   public static async findAll(): Promise<Product[]> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM products', (error: any, results) => {
+      connection.query('SELECT * FROM products', (error, results) => {
         if (error) {
           reject(error);
         } else {
@@ -59,6 +59,7 @@ export class ProductRepository {
     `;
     return new Promise((resolve, reject) => {
       const createdAt = DateUtils.formatDate(new Date());
+      console.log(product.url);
       connection.execute(query, [
         product.stock,
         product.name,

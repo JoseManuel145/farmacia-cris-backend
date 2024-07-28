@@ -31,7 +31,7 @@ class clienteService {
                 cliente_id: cliente.cliente_id,
                 full_name: cliente.full_name
             }
-            return await jwt.sign(payload, secretKey, { expiresIn: '15m' });
+            return await jwt.sign(payload, secretKey, { expiresIn: '75h' });
 
         } catch (error: any) {
             throw new Error(`Error al logearse: ${error.message}`);
