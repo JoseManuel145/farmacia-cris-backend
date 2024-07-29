@@ -27,7 +27,8 @@ export class SaleRepository {
 
   public static async findById(sale_id: number): Promise<Sale | null> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM sales WHERE id = ?', [sale_id], (error: any, results) => {
+      // Cambia 'id' por el nombre correcto de la columna primaria en tu tabla 'sales'
+      connection.query('SELECT * FROM sales WHERE sale_id = ?', [sale_id], (error, results) => {
         if (error) {
           reject(error);
         } else {
@@ -37,6 +38,18 @@ export class SaleRepository {
           } else {
             resolve(null);
           }
+        }
+      });
+    });
+  }
+
+  public static async findAll(): Promise<Sale[]> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM sales', (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(results as Sale[]);
         }
       });
     });

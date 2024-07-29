@@ -7,12 +7,21 @@ class VoucherService {
   public static async createVoucher(voucher: Voucher): Promise<Voucher> {
     try {
       voucher.created_at = DateUtils.formatDate(new Date());
-      voucher.status = "pending";
+      voucher.status = voucher.status || "pending";
       return await VoucherRepository.createVoucher(voucher);
     } catch (error: any) {
       throw new Error(`Error al crear el voucher: ${error.message}`);
     }
   }
+
+  public static async getAllVouchers(): Promise<Voucher[]> {
+    try {
+      return await VoucherRepository.findAll();
+    } catch (error: any) {
+      throw new Error(`Error al obtener los vouchers: ${error.message}`);
+    }
+  }
+
 
   public static async updateVoucherStatus(voucherId: number, status: string): Promise<Voucher | null> {
     try {

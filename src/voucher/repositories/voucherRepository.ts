@@ -25,6 +25,18 @@ export class VoucherRepository {
       });
     });
   }
+  public static async findAll(): Promise<Voucher[]> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM vouchers', (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          const vouchers: Voucher[] = results as Voucher[];
+          resolve(vouchers);
+        }
+      });
+    });
+  }
 
   public static async updateVoucherStatus(voucher_id: number, status: string): Promise<Voucher | null> {
     const query = 'UPDATE vouchers SET status = ?, updated_at = ? WHERE id = ?';

@@ -3,6 +3,12 @@ import SaleService from '../services/salesServices';
 
 export const createSale = async (req: Request, res: Response) => {
   try {
+    const { client_id, employee_id, total_price } = req.body;
+
+    if (!client_id || !employee_id || total_price === undefined) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
     const sale = await SaleService.createSale(req.body);
     res.status(201).json(sale);
   } catch (error: any) {
@@ -18,6 +24,15 @@ export const getSaleById = async (req: Request, res: Response) => {
     } else {
       res.status(404).json({ message: 'Sale not found' });
     }
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getAllSales = async (_req: Request, res: Response) => {
+  try {
+    const sales = await SaleService.getAllSales();
+    res.status(200).json(sales);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

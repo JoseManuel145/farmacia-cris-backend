@@ -20,6 +20,14 @@ class SaleService {
       throw new Error(`Error al encontrar la venta: ${error.message}`);
     }
   }
+
+  public static async getAllSales(): Promise<Sale[]> {
+    try {
+      return await SaleRepository.findAll();
+    } catch (error: any) {
+      throw new Error(`Error al obtener todas las ventas: ${error.message}`);
+    }
+  }
 }
 
 export default SaleService;

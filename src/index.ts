@@ -9,10 +9,13 @@ import productRoutes from './product/routes/productRoutes';
 import clienteRoutes from './cliente/routes/clienteRoutes';
 import cartItemRoutes from './cartItem/routes/cartItemRoutes'; // Importar rutas de cartItem
 import cartRoutes from './cart/routes/cartRoutes';// Importar rutas de cart
+import saleRoutes from './sales/routes/salesRoutes';
+import voucherRoutes from './voucher/routes/voucherRoutes';
 
 // Importar middlewares compartidos
 import { errorHandler } from './shared/middlewares/errorHandler';
 import { notFoundHandler } from './shared/middlewares/notFoundHandler';
+
 
 // Configuración de variables de entorno
 dotenv.config();
@@ -31,7 +34,8 @@ app.use('/api/product', productRoutes);
 app.use('/api/client', clienteRoutes);
 app.use('/api/cartItem', cartItemRoutes); // Agregar rutas de cartItem
 app.use('/api/cart', cartRoutes); // Agregar rutas de cart
-
+app.use('/api/sale', saleRoutes); // Agregar rutas de sale
+app.use('/api/voucher', voucherRoutes); // Agregar rutas de voucher
 // Middleware para manejar rutas no encontradas
 app.use(notFoundHandler);
 
