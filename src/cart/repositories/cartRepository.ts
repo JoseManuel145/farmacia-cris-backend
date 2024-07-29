@@ -35,11 +35,11 @@ export class CartRepository {
   }
 
   public static async createCart(cart: Cart): Promise<Cart> {
-    const query = 'INSERT INTO carts (user_id, total_price, created_at) VALUES (?, ?, ?)';
+    const query = 'INSERT INTO carts (cliente_id, total_price, created_at) VALUES (?, ?, ?)';
     return new Promise((resolve, reject) => {
       const createdAt = new Date().toISOString();
       connection.execute(query, [
-        cart.user_id,
+        cart.cliente_id,
         cart.total_price,
         createdAt
       ], (error, result: ResultSetHeader) => {
@@ -55,11 +55,11 @@ export class CartRepository {
   }
 
   public static async updateCart(cart_id: number, cartData: Cart): Promise<Cart | null> {
-    const query = 'UPDATE carts SET user_id = ?, total_price = ?, updated_at = ? WHERE id = ?';
+    const query = 'UPDATE carts SET cliente_id = ?, total_price = ?, updated_at = ? WHERE id = ?';
     return new Promise((resolve, reject) => {
       const updatedAt = new Date().toISOString();
       connection.execute(query, [
-        cartData.user_id,
+        cartData.cliente_id,
         cartData.total_price,
         updatedAt,
         cart_id

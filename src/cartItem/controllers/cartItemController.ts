@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import cartItemService from '../services/cartItemService';
+import cartService from '../../cart/services/cartServices';
 
 export const getCartItems = async (_req: Request, res: Response) => {
   try {
@@ -31,11 +32,23 @@ export const createCartItem = async (req: Request, res: Response) => {
   try {
     const { product_id, quantity, price, cart_id } = req.body;
 
-    if (!product_id || !quantity || !price || !cart_id) {
-      return res.status(400).json({ message: 'Missing required fields' });
+    // Verificar si el cart_id existe
+    const cart = await cartService.getCartById(cart_id);
+    if (!cart) {
+      return res.status(400).json({ message: 'Invalid cart_id' });
     }
 
-    const newCartItem = await cartItemService.addCartItem(req.body);
+    // Proceder con la creación del CartItem
+    const newCartItem = await cartItemService.addCartItem({
+      product_id,
+      quantity,
+      price,
+      cart_id,
+      id: 0, // or generate a new id if necessary
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      deleted: false
+    });
     res.status(201).json(newCartItem);
   } catch (error: any) {
     res.status(500).json({ error: error.message });

@@ -1,6 +1,7 @@
 import { CartRepository } from "../repositories/cartRepository";
 import { Cart } from "../models/cart";
 import { DateUtils } from "../../shared/utils/DateUtils";
+import { ClienteRepository } from "../../cliente/repositories/ClienteRepository";
 
 class cartService {
   public static async getAllCarts(): Promise<Cart[]> {
@@ -19,24 +20,28 @@ class cartService {
     }
   }
 
-  public static async addCart(cart: Cart) {
-    try {
-      if (!cart.created_at) {
-        cart.created_at = DateUtils.formatDate(new Date());
+    public static async addCart(cart: Cart): Promise<Cart> {
+      try {
+        // Verificar si el cliente existe
+        const cliente = await ClienteRepository.findById(cart.cliente_id);
+        if (!cliente) {
+          throw new Error(`Cliente with ID ${cart.cliente_id} does not exist.`);
+        }
+  
+        // Si el cliente existe, crear el carrito
+        return await CartRepository.createCart(cart);
+      } catch (error: any) {
+        throw new Error(`Error al crear el carrito: ${error.message}`);
       }
-      return await CartRepository.createCart(cart);
-    } catch (error: any) {
-      throw new Error(`Error al crear el carrito: ${error.message}`);
     }
-  }
 
   public static async modifyCart(cartId: number, cartData: Cart): Promise<Cart | null> {
     try {
       const cartFinded = await CartRepository.findById(cartId);
 
       if (cartFinded) {
-        if (cartData.user_id !== undefined) {
-          cartFinded.user_id = cartData.user_id;
+        if (cartData.cliente_id !== undefined) {
+          cartFinded.cliente_id = cartData.cliente_id;
         }
         if (cartData.total_price !== undefined) {
           cartFinded.total_price = cartData.total_price;

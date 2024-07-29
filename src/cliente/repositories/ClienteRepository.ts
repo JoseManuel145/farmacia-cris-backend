@@ -19,20 +19,20 @@ export class ClienteRepository {
         */
     public static async findById(cliente_id: number): Promise<Cliente | null> {
         return new Promise((resolve, reject) => {
-            connection.query('SELECT * FROM cliente WHERE cliente_id = ?', [cliente_id], (error: any, results) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    const clientes: Cliente[] = results as Cliente[];
-                    if (clientes.length > 0) {
-                        resolve(clientes[0]);
-                    } else {
-                        resolve(null);
-                    }
-                }
-            });
+          connection.query('SELECT * FROM cliente WHERE cliente_id = ?', [cliente_id], (error, results) => {
+            if (error) {
+              reject(error);
+            } else {
+              const clientes: Cliente[] = results as Cliente[];
+              if (clientes.length > 0) {
+                resolve(clientes[0]);
+              } else {
+                resolve(null);
+              }
+            }
+          });
         });
-    } 
+      }
     public static async findByEmail(email: string): Promise<Cliente | null> {
         return new Promise((resolve, reject) => {
             connection.query('SELECT * FROM cliente WHERE email = ?', [email], (error: any, results) => {

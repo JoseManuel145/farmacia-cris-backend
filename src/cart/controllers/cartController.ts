@@ -29,9 +29,9 @@ export const getCartById = async (req: Request, res: Response) => {
 
 export const createCart = async (req: Request, res: Response) => {
   try {
-    const { user_id, total_price } = req.body;
+    const { cliente_id, total_price } = req.body;
 
-    if (!user_id || !total_price) {
+    if (!cliente_id || !total_price) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
