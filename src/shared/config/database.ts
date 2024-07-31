@@ -11,16 +11,16 @@ const connection = mysql.createConnection({
     port: parseInt(process.env.DB_PORT || '3306', 10),
     namedPlaceholders: true,
     authPlugins: {
-      mysql_clear_password: () => () => Buffer.from(process.env.DB_PASSWORD + '\0')
+        mysql_clear_password: () => () => Buffer.from(process.env.DB_PASSWORD + '\0')
     }
 });
 
 connection.connect((err) => {
     if (err) {
-      console.error('Error connecting to MySQL:', err);
-      return;
+        console.error('Error connecting to MySQL:', err.message);
+        return;
     }
     console.log('Connected to MySQL database');
-  });
-  
-  export default connection;
+});
+
+export default connection;
