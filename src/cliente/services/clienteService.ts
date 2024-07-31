@@ -17,6 +17,7 @@ class clienteService {
     public static async login(email: string, password: string) {
         try {
             const cliente = await this.getClienteByEmail(email);
+            console.log(cliente)
             if (!cliente) {
                 return null;
             }

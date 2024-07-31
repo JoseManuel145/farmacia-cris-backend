@@ -1,57 +1,49 @@
-import { ResultSetHeader } from 'mysql2';
-import connection from '../../shared/config/database';
 import { Sale } from '../models/sales';
+import { query } from '../../shared/config/database';
 
 export class SaleRepository {
 
   public static async createSale(sale: Sale): Promise<Sale> {
-    const query = 'INSERT INTO sales (client_id, employee_id, total_price, created_at) VALUES (?, ?, ?, ?)';
-    return new Promise((resolve, reject) => {
+    try {
+      const sql = 'INSERT INTO sales (client_id, employee_id, total_price, created_at) VALUES (?, ?, ?, ?)';
       const createdAt = new Date().toISOString();
-      connection.execute(query, [
+      const [result]: any = await query(sql, [
         sale.client_id,
         sale.employee_id,
         sale.total_price,
         createdAt
-      ], (error, result: ResultSetHeader) => {
-        if (error) {
-          reject(error);
-        } else {
-          const createdSaleId = result.insertId;
-          const createdSale: Sale = { ...sale, id: createdSaleId, created_at: createdAt };
-          resolve(createdSale);
-        }
-      });
-    });
+      ]);
+      const createdSaleId = result.insertId;
+      return { ...sale, id: createdSaleId, created_at: createdAt };
+    } catch (error) {
+      console.error("Error creating sale:", error);
+      throw error;
+    }
   }
 
   public static async findById(sale_id: number): Promise<Sale | null> {
-    return new Promise((resolve, reject) => {
-      // Cambia 'id' por el nombre correcto de la columna primaria en tu tabla 'sales'
-      connection.query('SELECT * FROM sales WHERE sale_id = ?', [sale_id], (error, results) => {
-        if (error) {
-          reject(error);
-        } else {
-          const sales: Sale[] = results as Sale[];
-          if (sales.length > 0) {
-            resolve(sales[0]);
-          } else {
-            resolve(null);
-          }
-        }
-      });
-    });
+    try {
+      const sql = 'SELECT * FROM sales WHERE sale_id = ?';
+      const [results]: any = await query(sql, [sale_id]);
+      if (results.length > 0) {
+        return results[0] as Sale;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Error finding sale by ID:", error);
+      throw error;
+    }
   }
 
   public static async findAll(): Promise<Sale[]> {
-    return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM sales', (error, results) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(results as Sale[]);
-        }
-      });
-    });
+    try {
+      const sql = 'SELECT * FROM sales';
+      const [results]: any = await query(sql);
+      return results as Sale[];
+    } catch (error) {
+      console.error("Error finding all sales:", error);
+      throw error;
+    }
   }
 }

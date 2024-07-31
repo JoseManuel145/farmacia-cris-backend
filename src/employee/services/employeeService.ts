@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const secretKey = process.env.SECRET || "tyry";
+const secretKey = process.env.SECRET || "";
 
 const saltRounds = 10;
 
