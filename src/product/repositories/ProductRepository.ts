@@ -1,88 +1,99 @@
+import { ResultSetHeader } from 'mysql2';
+import connection from '../../shared/config/database';
 import { Product } from '../models/Product';
-import { query } from '../../shared/config/database';
 import { DateUtils } from '../../shared/utils/DateUtils';
 
 export class ProductRepository {
 
   public static async findAll(): Promise<Product[]> {
-    try {
-      const sql = 'SELECT * FROM products';
-      const [results]: any = await query(sql);
-      return results as Product[];
-    } catch (error) {
-      console.error("Error finding all products:", error);
-      throw error;
-    }
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM products', (error, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          const products: Product[] = results as Product[];
+          resolve(products);
+        }
+      });
+    });
   }
 
   public static async findById(product_id: number): Promise<Product | null> {
-    try {
-      const sql = 'SELECT * FROM products WHERE id = ?';
-      const [results]: any = await query(sql, [product_id]);
-      if (results.length > 0) {
-        return results[0] as Product;
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error("Error finding product by ID:", error);
-      throw error;
-    }
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM products WHERE id = ?', [product_id], (error: any, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          const products: Product[] = results as Product[];
+          if (products.length > 0) {
+            resolve(products[0]);
+          } else {
+            resolve(null);
+          }
+        }
+      });
+    });
   }
 
   public static async findByName(name: string): Promise<Product | null> {
-    try {
-      const sql = 'SELECT * FROM products WHERE name = ?';
-      const [results]: any = await query(sql, [name]);
-      if (results.length > 0) {
-        return results[0] as Product;
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error("Error finding product by name:", error);
-      throw error;
-    }
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM products WHERE name = ?', [name], (error: any, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          const products: Product[] = results as Product[];
+          if (products.length > 0) {
+            resolve(products[0]);
+          } else {
+            resolve(null);
+          }
+        }
+      });
+    });
   }
 
   public static async createProduct(product: Product): Promise<Product> {
-    try {
-      const sql = `
-        INSERT INTO products (stock, name, price, description, formula, secundary_effects, caducity, dose, type, uso, url, created_at, created_by)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `;
+    const query = `
+      INSERT INTO products (stock, name, price, description, formula, secundary_effects, caducity, dose, type, uso, url, created_at, created_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    return new Promise((resolve, reject) => {
       const createdAt = DateUtils.formatDate(new Date());
-      const [result]: any = await query(sql, [
+      console.log(product.url);
+      connection.execute(query, [
         product.stock,
         product.name,
         product.price,
-        product.description || '',
+        product.description || '',  // Asegurar que no haya valores undefined
         product.formula || '',
         product.secundary_effects || '',
         product.caducity || '',
         product.dose || '',
         product.type || '',
         product.uso || '',
-        product.url || '',
+        product.url || '',  // Imagen en base64
         createdAt,
         product.created_by
-      ]);
-      const createdProductId = result.insertId;
-      return { ...product, id: createdProductId, created_at: createdAt };
-    } catch (error) {
-      console.error("Error creating product:", error);
-      throw error;
-    }
+      ], (error, result: ResultSetHeader) => {
+        if (error) {
+          reject(error);
+        } else {
+          const createdProductId = result.insertId;
+          const createdProduct: Product = { ...product, id: createdProductId, created_at: createdAt };
+          resolve(createdProduct);
+        }
+      });
+    });
   }
 
   public static async updateProduct(product_id: number, productData: Product): Promise<Product | null> {
-    try {
-      const sql = `
-        UPDATE products SET stock = ?, name = ?, price = ?, description = ?, formula = ?, secundary_effects = ?, caducity = ?, dose = ?, type = ?, uso = ?, url = ?, updated_at = ?, updated_by = ?
-        WHERE id = ?
-      `;
+    const query = `
+      UPDATE products SET stock = ?, name = ?, price = ?, description = ?, formula = ?, secundary_effects = ?, caducity = ?, dose = ?, type = ?, uso = ?, url = ?, updated_at = ?, updated_by = ?
+      WHERE id = ?
+    `;
+    return new Promise((resolve, reject) => {
       const updatedAt = DateUtils.formatDate(new Date());
-      const [result]: any = await query(sql, [
+      connection.execute(query, [
         productData.stock,
         productData.name,
         productData.price,
@@ -97,26 +108,34 @@ export class ProductRepository {
         updatedAt,
         productData.updated_by,
         product_id
-      ]);
-      if (result.affectedRows > 0) {
-        return { ...productData, id: product_id, updated_at: updatedAt };
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error("Error updating product:", error);
-      throw error;
-    }
+      ], (error, result: ResultSetHeader) => {
+        if (error) {
+          reject(error);
+        } else {
+          if (result.affectedRows > 0) {
+            resolve(productData);
+          } else {
+            resolve(null);
+          }
+        }
+      });
+    });
   }
 
   public static async deleteProduct(product_id: number): Promise<boolean> {
-    try {
-      const sql = 'DELETE FROM products WHERE id = ?';
-      const [result]: any = await query(sql, [product_id]);
-      return result.affectedRows > 0;
-    } catch (error) {
-      console.error("Error deleting product:", error);
-      throw error;
-    }
+    const query = 'DELETE FROM products WHERE id = ?';
+    return new Promise((resolve, reject) => {
+      connection.execute(query, [product_id], (error, result: ResultSetHeader) => {
+        if (error) {
+          reject(error);
+        } else {
+          if (result.affectedRows > 0) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }
+      });
+    });
   }
 }

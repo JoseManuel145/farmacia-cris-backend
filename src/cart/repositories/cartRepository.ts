@@ -1,80 +1,97 @@
+import { ResultSetHeader } from 'mysql2';
+import connection from '../../shared/config/database';
 import { Cart } from '../models/cart';
-import { query } from '../../shared/config/database'; // Asegúrate de importar correctamente
 
 export class CartRepository {
 
   public static async findAll(): Promise<Cart[]> {
-    try {
-      const sql = 'SELECT * FROM carts';
-      const [results]: any = await query(sql);
-      return results as Cart[];
-    } catch (error) {
-      console.error("Error fetching carts:", error);
-      throw error;
-    }
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM carts', (error: any, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          const carts: Cart[] = results as Cart[];
+          resolve(carts);
+        }
+      });
+    });
   }
 
   public static async findById(cart_id: number): Promise<Cart | null> {
-    try {
-      const sql = 'SELECT * FROM carts WHERE id = ?';
-      const [results]: any = await query(sql, [cart_id]);
-      if (results.length > 0) {
-        return results[0] as Cart;
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error("Error finding cart by ID:", error);
-      throw error;
-    }
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM carts WHERE id = ?', [cart_id], (error: any, results) => {
+        if (error) {
+          reject(error);
+        } else {
+          const carts: Cart[] = results as Cart[];
+          if (carts.length > 0) {
+            resolve(carts[0]);
+          } else {
+            resolve(null);
+          }
+        }
+      });
+    });
   }
 
   public static async createCart(cart: Cart): Promise<Cart> {
-    try {
-      const sql = 'INSERT INTO carts (cliente_id, total_price, created_at) VALUES (?, ?, ?)';
+    const query = 'INSERT INTO carts (cliente_id, total_price, created_at) VALUES (?, ?, ?)';
+    return new Promise((resolve, reject) => {
       const createdAt = new Date().toISOString();
-      const [result]: any = await query(sql, [
+      connection.execute(query, [
         cart.cliente_id,
         cart.total_price,
         createdAt
-      ]);
-      const createdCartId = result.insertId;
-      return { ...cart, id: createdCartId, created_at: createdAt };
-    } catch (error) {
-      console.error("Error creating cart:", error);
-      throw error;
-    }
+      ], (error, result: ResultSetHeader) => {
+        if (error) {
+          reject(error);
+        } else {
+          const createdCartId = result.insertId;
+          const createdCart: Cart = { ...cart, id: createdCartId, created_at: createdAt };
+          resolve(createdCart);
+        }
+      });
+    });
   }
 
   public static async updateCart(cart_id: number, cartData: Cart): Promise<Cart | null> {
-    try {
-      const sql = 'UPDATE carts SET cliente_id = ?, total_price = ?, updated_at = ? WHERE id = ?';
+    const query = 'UPDATE carts SET cliente_id = ?, total_price = ?, updated_at = ? WHERE id = ?';
+    return new Promise((resolve, reject) => {
       const updatedAt = new Date().toISOString();
-      const [result]: any = await query(sql, [
+      connection.execute(query, [
         cartData.cliente_id,
         cartData.total_price,
         updatedAt,
         cart_id
-      ]);
-      if (result.affectedRows > 0) {
-        return { ...cartData, id: cart_id, updated_at: updatedAt };
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error("Error updating cart:", error);
-      throw error;
-    }
+      ], (error, result: ResultSetHeader) => {
+        if (error) {
+          reject(error);
+        } else {
+          if (result.affectedRows > 0) {
+            const updatedCart: Cart = { ...cartData, id: cart_id, updated_at: updatedAt };
+            resolve(updatedCart);
+          } else {
+            resolve(null);
+          }
+        }
+      });
+    });
   }
 
   public static async deleteCart(cart_id: number): Promise<boolean> {
-    try {
-      const sql = 'DELETE FROM carts WHERE id = ?';
-      const [result]: any = await query(sql, [cart_id]);
-      return result.affectedRows > 0;
-    } catch (error) {
-      console.error("Error deleting cart:", error);
-      throw error;
-    }
+    const query = 'DELETE FROM carts WHERE id = ?';
+    return new Promise((resolve, reject) => {
+      connection.execute(query, [cart_id], (error, result: ResultSetHeader) => {
+        if (error) {
+          reject(error);
+        } else {
+          if (result.affectedRows > 0) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }
+      });
+    });
   }
 }
