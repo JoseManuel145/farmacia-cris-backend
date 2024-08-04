@@ -3,10 +3,10 @@ import connection from '../../shared/config/database';
 import { Cliente } from '../models/Cliente';
 
 export class ClienteRepository {
-    /*
-    public static async findAll(): Promise<Cliente[]> {
+    
+    public static async findAll(id:number): Promise<Cliente[]> {
         return new Promise((resolve, reject) => {
-            connection.query('SELECT cliente_id, full_name FROM clientes', (error: any, results) => {
+            connection.query('SELECT * FROM cliente WHERE cliente_id =?',[id], (error: any, results) => {
                 if (error) {
                     reject(error);
                 } else {
@@ -16,7 +16,7 @@ export class ClienteRepository {
             });
         });
     }
-        */
+        
     public static async findById(cliente_id: number): Promise<Cliente | null> {
         return new Promise((resolve, reject) => {
           connection.query('SELECT * FROM cliente WHERE cliente_id = ?', [cliente_id], (error, results) => {
@@ -69,11 +69,12 @@ export class ClienteRepository {
         });
     }
     public static async updateCliente(cliente_id: number, clientData: Cliente): Promise<Cliente | null> {
-        const query = 'UPDATE cliente SET full_name = ?, password = ?, updated_at = ?, updated_by = ? WHERE cliente_id = ?';
+        const query = 'UPDATE cliente SET full_name = ?, password = ?,email=?, updated_at = ?, updated_by = ? WHERE cliente_id = ?';
         return new Promise((resolve, reject) => {
             connection.execute(query, [
                 clientData.full_name,
                 clientData.password,
+                clientData.email,
                 clientData.updated_at,
                 clientData.updated_by,
                 cliente_id

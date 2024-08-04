@@ -31,7 +31,7 @@ class VoucherService {
     }
   }
 
-  public static async getVoucherById(voucherId: number): Promise<Voucher | null> {
+  public static async getVoucherById(voucherId: number): Promise<[] | null> {
     try {
       return await VoucherRepository.findById(voucherId);
     } catch (error: any) {

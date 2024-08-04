@@ -35,15 +35,17 @@ export class CartRepository {
   }
 
   public static async createCart(cart: Cart): Promise<Cart> {
-    const query = 'INSERT INTO carts (cliente_id, total_price, created_at) VALUES (?, ?, ?)';
+    const query = 'INSERT INTO carts (cliente_id, total_price, created_at, status) VALUES (?, ?, ?, ?)';
     return new Promise((resolve, reject) => {
       const createdAt = new Date().toISOString();
       connection.execute(query, [
         cart.cliente_id,
         cart.total_price,
-        createdAt
+        createdAt,
+        cart.status
       ], (error, result: ResultSetHeader) => {
         if (error) {
+          console.log(error);
           reject(error);
         } else {
           const createdCartId = result.insertId;
@@ -72,6 +74,44 @@ export class CartRepository {
             resolve(updatedCart);
           } else {
             resolve(null);
+          }
+        }
+      });
+    });
+  }
+  public static async updateCartstatus(cart_id: number): Promise<string | null> {
+    const query = 'UPDATE carts SET status = ? WHERE id = ?';
+    return new Promise((resolve, reject) => {
+      const updatedAt = new Date().toISOString();
+      connection.execute(query, [
+        "Pagado",
+        cart_id
+      ], (error, result: ResultSetHeader) => {
+        if (error) {
+          reject(error);
+        } else {
+          if (result.affectedRows > 0) {
+            resolve("dd");
+          } else {
+            resolve(null);
+          }
+        }
+      });
+    });
+  }
+  public static async putStatus(cart_id: number, status:string,total:number): Promise<boolean> {
+    const query = 'UPDATE carts SET status = ?, total_price= ? WHERE id = ?';
+    return new Promise((resolve, reject) => {
+      connection.execute(query, [status,total, cart_id], (error, result: ResultSetHeader) => {
+        if (error) {
+          reject(error);
+          console.log(error);
+          
+        } else {
+          if (result.affectedRows > 0) {
+            resolve(true);
+          } else {
+            resolve(false);
           }
         }
       });

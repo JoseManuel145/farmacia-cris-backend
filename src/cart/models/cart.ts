@@ -5,4 +5,5 @@ export interface Cart {
   created_at: string;
   updated_at: string;
   deleted: boolean;
+  status:string;
 }

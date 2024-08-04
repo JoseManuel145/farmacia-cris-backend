@@ -16,12 +16,15 @@ export const loginClient = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-/*
-export const getClientes = async (_req: Request, res: Response) => {
+
+export const getClientes = async (req: Request, res: Response) => {
   try {
-    const clientes = await clienteService.getAllClients();
+    if (!req.params.id) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+    const clientes = await clienteService.getAllClients(Number(req.params.id));
     if (clientes.length > 0) {
-      res.status(200).json(clientes);
+      res.status(200).json(clientes[0]);
     } else {
       res.status(404).json({ message: 'No records found' });
     }
@@ -29,7 +32,7 @@ export const getClientes = async (_req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
-
+/*
 export const getClientById = async (req: Request, res: Response) => {
   try {
     const employee = await clienteService.getClientById(parseInt(req.params.cliente_id, 10));
@@ -59,6 +62,7 @@ export const createCliente = async (req: Request, res: Response) => {
 };
 
 export const updateCliente = async (req: Request, res: Response) => {
+  
   try {
     const updatedCliente = await clienteService.modifyCliente(parseInt(req.params.cliente_id, 10), req.body);
     if (updatedCliente) {

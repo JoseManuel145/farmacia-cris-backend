@@ -4,9 +4,9 @@ import { authMiddleware } from '../../shared/middlewares/auth';
 
 const voucherRoutes: Router = Router();
 
-voucherRoutes.post('/', authMiddleware, createVoucher);
-voucherRoutes.put('/:voucher_id', authMiddleware, updateVoucherStatus);
-voucherRoutes.get('/:voucher_id', authMiddleware, getVoucherById);
-voucherRoutes.get('/', authMiddleware, getAllVouchers); // Nueva ruta para obtener todos los vouchers
+voucherRoutes.post('/', createVoucher);
+voucherRoutes.put('/:voucher_id', updateVoucherStatus);
+voucherRoutes.get('/:voucher_id', getVoucherById);
+voucherRoutes.get('/', getAllVouchers); // Nueva ruta para obtener todos los vouchers
 
 export default voucherRoutes;

@@ -20,22 +20,34 @@ class cartService {
     }
   }
 
-    public static async addCart(cart: Cart): Promise<Cart> {
-      try {
-        // Verificar si el cliente existe
-        const cliente = await ClienteRepository.findById(cart.cliente_id);
-        if (!cliente) {
-          throw new Error(`Cliente with ID ${cart.cliente_id} does not exist.`);
-        }
-  
-        // Si el cliente existe, crear el carrito
-        return await CartRepository.createCart(cart);
-      } catch (error: any) {
-        throw new Error(`Error al crear el carrito: ${error.message}`);
+  public static async addCart(cart: Cart): Promise<Cart> {
+    try {
+      // Verificar si el cliente existe
+      const cliente = await ClienteRepository.findById(cart.cliente_id);
+      if (!cliente) {
+        throw new Error(`Cliente with ID ${cart.cliente_id} does not exist.`);
       }
-    }
 
-  public static async modifyCart(cartId: number, cartData: Cart): Promise<Cart | null> {
+      // Si el cliente existe, crear el carrito
+      return await CartRepository.createCart(cart);
+    } catch (error: any) {
+      throw new Error(`Error al crear el carrito: ${error.message}`);
+    }
+  }
+  public static async modifyCartstatus(cartId: number): Promise<string | null> {
+    try {
+      const cartFinded = await CartRepository.findById(cartId);
+
+      return await CartRepository.updateCartstatus(cartId);
+    } catch (error: any) {
+      throw new Error(`Error al modificar el carrito: ${error.message}`);
+    }
+  }
+
+  public static async modifyCart(
+    cartId: number,
+    cartData: Cart
+  ): Promise<Cart | null> {
     try {
       const cartFinded = await CartRepository.findById(cartId);
 
@@ -56,6 +68,18 @@ class cartService {
       }
     } catch (error: any) {
       throw new Error(`Error al modificar el carrito: ${error.message}`);
+    }
+  }
+
+  public static async updateStatus(
+    cartId: number,
+    status: string,
+    total: number
+  ): Promise<boolean> {
+    try {
+      return await CartRepository.putStatus(cartId, status, total);
+    } catch (error: any) {
+      throw new Error(`Error al eliminar el carrito: ${error.message}`);
     }
   }
 

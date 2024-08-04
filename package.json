@@ -4,10 +4,9 @@
   "description": "API REST de prueba para fundamento de base de datos.",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev src/index.ts",
+    "dev": "tsnd --respawn --clear src/index.ts",
     "start": "node build/index.js",
-    "tsc": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "tsc": "tsc"
   },
   "author": "Jose Manuel",
   "license": "ISC",
@@ -19,9 +18,11 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@types/cors": "^2.8.17",
     "@types/multer": "^1.4.11",
     "@types/node": "^20.14.11",
     "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",

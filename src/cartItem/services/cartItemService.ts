@@ -10,8 +10,22 @@ class cartItemService {
       throw new Error(`Error al obtener los ítems del carrito: ${error.message}`);
     }
   }
+  public static async getCarH(id:number): Promise<[]> {
+    try {
+      return await CartItemRepository.getCarH(id);
+    } catch (error: any) {
+      throw new Error(`Error al obtener los ítems del carrito: ${error.message}`);
+    }
+  }
+  public static async getImgs(): Promise<CartItem[]> {
+    try {
+      return await CartItemRepository.getImgs();
+    } catch (error: any) {
+      throw new Error(`Error al obtener los ítems del carrito: ${error.message}`);
+    }
+  }
 
-  public static async getCartItemById(cartItemId: number): Promise<CartItem | null> {
+  public static async getCartItemById(cartItemId: number): Promise<CartItem[] | null> {
     try {
       return await CartItemRepository.findById(cartItemId);
     } catch (error: any) {
@@ -36,22 +50,22 @@ class cartItemService {
 
       if (cartItemFinded) {
         if (cartItemData.product_id !== undefined) {
-          cartItemFinded.product_id = cartItemData.product_id;
+          cartItemFinded[0].product_id = cartItemData.product_id;
         }
         if (cartItemData.quantity !== undefined) {
-          cartItemFinded.quantity = cartItemData.quantity;
+          cartItemFinded[0].quantity = cartItemData.quantity;
         }
         if (cartItemData.price !== undefined) {
-          cartItemFinded.price = cartItemData.price;
+          cartItemFinded[0].price = cartItemData.price;
         }
         if (cartItemData.cart_id !== undefined) {
-          cartItemFinded.cart_id = cartItemData.cart_id;
+          cartItemFinded[0].cart_id = cartItemData.cart_id;
         }
         if (cartItemData.updated_at !== undefined) {
-          cartItemFinded.updated_at = DateUtils.formatDate(new Date());
+          cartItemFinded[0].updated_at = DateUtils.formatDate(new Date());
         }
 
-        return await CartItemRepository.updateCartItem(cartItemId, cartItemFinded);
+        return await CartItemRepository.updateCartItem(cartItemId, cartItemFinded[0]);
       } else {
         return null;
       }

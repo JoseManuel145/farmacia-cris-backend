@@ -5,7 +5,7 @@ import { Voucher } from '../models/voucher';
 export class VoucherRepository {
 
   public static async createVoucher(voucher: Voucher): Promise<Voucher> {
-    const query = 'INSERT INTO vouchers (sale_id, product_id, quantity, status, created_at) VALUES (?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO vouchers (sale_id, id_cart, quantity, status, created_at) VALUES (?, ?, ?, ?, ?)';
     return new Promise((resolve, reject) => {
       const createdAt = new Date().toISOString();
       connection.execute(query, [
@@ -69,15 +69,20 @@ export class VoucherRepository {
     });
   }
 
-  public static async findById(voucher_id: number): Promise<Voucher | null> {
+  public static async findById(voucher_id: number): Promise<[] | null> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM vouchers WHERE id = ?', [voucher_id], (error: any, results) => {
+      connection.query(`SELECT c.id AS id_cart, v.id AS voucher_id,p.url, p.name AS product_name, ci.quantity, ci.price, c.total_price
+      FROM vouchers v JOIN carts c ON v.id_cart = c.id
+      JOIN cart_items ci ON c.id = ci.cart_id JOIN
+      products p ON ci.product_id = p.id
+      WHERE v.status = 'pending' and v.id =? and c.status =? and ci.cart_id =v.id_cart and ci.deleted = 0`,
+       [voucher_id,"En proceso"], (error: any, results) => {
         if (error) {
           reject(error);
         } else {
-          const vouchers: Voucher[] = results as Voucher[];
+          const vouchers: [] = results as [];
           if (vouchers.length > 0) {
-            resolve(vouchers[0]);
+            resolve(vouchers);
           } else {
             resolve(null);
           }

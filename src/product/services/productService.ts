@@ -5,12 +5,15 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const url = process.env.URL_LOCAL;
 class ProductService {
 
     public static async getAllProducts(): Promise<Product[]> {
         try {
             return await ProductRepository.findAll();
         } catch (error: any) {
+            console.log(error);
+            
             throw new Error(`Error al obtener los productos: ${error.message}`);
         }
     }
@@ -31,24 +34,26 @@ class ProductService {
         }
     }
 
-    public static async addProduct(product: Product) {
+    public static async addProduct(product: Product, img:Express.Multer.File) {
         try {
             if (!product.created_at) {
                 product.created_at = DateUtils.formatDate(new Date());
             }
+            product.url = `${url}uploads/${img.filename}`;
             return await ProductRepository.createProduct(product);
         } catch (error: any) {
             throw new Error(`Error al crear el producto: ${error.message}`);
         }
     }
 
-    public static async modifyProduct(productId: number, productData: Product): Promise<Product | null> {
+    public static async modifyProduct(productId: number, productData: Product,img:Express.Multer.File): Promise<Product | null> {
         try {
             const productFinded = await ProductRepository.findById(productId);
-
+            productData.url = `${url}uploads/${img.filename}`;
             if (productFinded) {
                 Object.assign(productFinded, productData);
                 productFinded.updated_at = DateUtils.formatDate(new Date());
+                
                 return await ProductRepository.updateProduct(productId, productFinded);
             } else {
                 return null;

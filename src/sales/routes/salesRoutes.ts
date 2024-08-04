@@ -4,8 +4,8 @@ import { authMiddleware } from '../../shared/middlewares/auth';
 
 const saleRoutes: Router = Router();
 
-saleRoutes.post('/', authMiddleware, createSale);
-saleRoutes.get('/:sale_id', authMiddleware, getSaleById);
-saleRoutes.get('/', authMiddleware, getAllSales);
+saleRoutes.post('/', createSale);
+saleRoutes.get('/:sale_id', getSaleById);
+saleRoutes.get('/', getAllSales);
 
 export default saleRoutes;

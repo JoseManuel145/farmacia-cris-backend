@@ -1,13 +1,12 @@
-import { Request, Response } from 'express';
-import VoucherService from '../services/voucherServices';
+import { Request, Response } from "express";
+import VoucherService from "../services/voucherServices";
 
 export const createVoucher = async (req: Request, res: Response) => {
   try {
     const { sale_id, product_id, quantity } = req.body;
 
-    // Validación de campos requeridos
     if (!sale_id || !product_id || quantity === undefined) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     const voucher = await VoucherService.createVoucher(req.body);
@@ -19,19 +18,24 @@ export const createVoucher = async (req: Request, res: Response) => {
 
 // Controlador para actualizar el estado de un voucher
 export const updateVoucherStatus = async (req: Request, res: Response) => {
+  console.log(req.body);
+  
   try {
     const { voucher_id } = req.params;
     const { status } = req.body;
 
     if (!status) {
-      return res.status(400).json({ error: 'Missing status field' });
+      return res.status(400).json({ error: "Missing status field" });
     }
 
-    const voucher = await VoucherService.updateVoucherStatus(parseInt(voucher_id, 10), status);
+    const voucher = await VoucherService.updateVoucherStatus(
+      parseInt(voucher_id, 10),
+      status
+    );
     if (voucher) {
       res.status(200).json(voucher);
     } else {
-      res.status(404).json({ message: 'Voucher not found or update failed' });
+      res.status(404).json({ message: "Voucher not found or update failed" });
     }
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -53,10 +57,9 @@ export const getVoucherById = async (req: Request, res: Response) => {
     if (voucher) {
       res.status(200).json(voucher);
     } else {
-      res.status(404).json({ message: 'Voucher not found' });
+      res.status(404).json({ message: "Voucher not found" });
     }
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
-

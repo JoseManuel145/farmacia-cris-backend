@@ -7,7 +7,7 @@ const employeeRoutes: Router = Router();
 employeeRoutes.post('/login', loginEmployee);
 
 employeeRoutes.get('/', getEmployees);
-employeeRoutes.get('/:employee_id', authMiddleware,getEmployeeById);
+employeeRoutes.get('/:employeeId', authMiddleware,getEmployeeById);
 employeeRoutes.post('/create', createEmployee);
 employeeRoutes.put('/edit/:employee_id', updateEmployee);
 employeeRoutes.delete('/delete/:employee_id', deleteEmployee);

@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import cartService from '../services/cartServices';
+import { Request, Response } from "express";
+import cartService from "../services/cartServices";
 
 export const getCarts = async (_req: Request, res: Response) => {
   try {
@@ -7,7 +7,7 @@ export const getCarts = async (_req: Request, res: Response) => {
     if (carts.length > 0) {
       res.status(200).json(carts);
     } else {
-      res.status(404).json({ message: 'No records found' });
+      res.status(404).json({ message: "No records found" });
     }
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -16,11 +16,13 @@ export const getCarts = async (_req: Request, res: Response) => {
 
 export const getCartById = async (req: Request, res: Response) => {
   try {
-    const cart = await cartService.getCartById(parseInt(req.params.cart_id, 10));
+    const cart = await cartService.getCartById(
+      parseInt(req.params.cart_id, 10)
+    );
     if (cart) {
       res.status(200).json(cart);
     } else {
-      res.status(404).json({ message: 'Cart not found' });
+      res.status(404).json({ message: "Cart not found" });
     }
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -28,11 +30,14 @@ export const getCartById = async (req: Request, res: Response) => {
 };
 
 export const createCart = async (req: Request, res: Response) => {
-  try {
-    const { cliente_id, total_price } = req.body;
+  console.log(req.body);
 
-    if (!cliente_id || !total_price) {
-      return res.status(400).json({ message: 'Missing required fields' });
+  try {
+    const { cliente_id, total_price, status } = req.body;
+
+    if (!cliente_id && !total_price && !status) {
+      console.log(33);
+      return res.status(400).json({ message: "Missing required fields" });
     }
 
     const newCart = await cartService.addCart(req.body);
@@ -44,11 +49,50 @@ export const createCart = async (req: Request, res: Response) => {
 
 export const updateCart = async (req: Request, res: Response) => {
   try {
-    const updatedCart = await cartService.modifyCart(parseInt(req.params.cart_id, 10), req.body);
+    const updatedCart = await cartService.modifyCart(
+      parseInt(req.params.cart_id, 10),
+      req.body
+    );
     if (updatedCart) {
       res.status(200).json(updatedCart);
     } else {
-      res.status(404).json({ message: 'Cart not found or update failed' });
+      res.status(404).json({ message: "Cart not found or update failed" });
+    }
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+export const updateCartstatus = async (req: Request, res: Response) => {
+  try {
+    const updatedCart = await cartService.modifyCartstatus(
+      parseInt(req.params.cart_id, 10)
+    );
+    if (updatedCart) {
+      res.status(200).json(updatedCart);
+    } else {
+      res.status(404).json({ message: "Cart not found or update failed" });
+    }
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+export const updateStatus = async (req: Request, res: Response) => {
+  console.log(req.body);
+  console.log(req.params);
+  
+  
+  try {
+    const updatedCart = await cartService.updateStatus(
+      parseInt(req.params.cart_id, 10),
+      req.body.status,
+      Number(req.body.total_price)
+    );
+    console.log(updatedCart);
+    
+    if (updatedCart) {
+      res.status(200).json(updatedCart);
+    } else {
+      res.status(404).json({ message: "Cart not found or update failed" });
     }
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -57,11 +101,13 @@ export const updateCart = async (req: Request, res: Response) => {
 
 export const deleteCart = async (req: Request, res: Response) => {
   try {
-    const deleted = await cartService.deleteCart(parseInt(req.params.cart_id, 10));
+    const deleted = await cartService.deleteCart(
+      parseInt(req.params.cart_id, 10)
+    );
     if (deleted) {
-      res.status(200).json({ message: 'Cart deleted successfully' });
+      res.status(200).json({ message: "Cart deleted successfully" });
     } else {
-      res.status(404).json({ message: 'Cart not found or delete failed' });
+      res.status(404).json({ message: "Cart not found or delete failed" });
     }
   } catch (error: any) {
     res.status(500).json({ error: error.message });
