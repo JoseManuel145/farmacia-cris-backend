@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsnd --respawn --clear src/index.ts",
-    "start": "node build/index.js",
+    "start": "pm2 start ./build/index.js --watch",
     "tsc": "tsc"
   },
   "author": "Jose Manuel",
