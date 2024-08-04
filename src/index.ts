@@ -10,7 +10,8 @@ import cartItemRoutes from "./cartItem/routes/cartItemRoutes";
 import cartRoutes from "./cart/routes/cartRoutes";
 import saleRoutes from "./sales/routes/salesRoutes";
 import voucherRoutes from "./voucher/routes/voucherRoutes";
-
+import https from "https";
+import fs from "fs";
 import { errorHandler } from "./shared/middlewares/errorHandler";
 import { notFoundHandler } from "./shared/middlewares/notFoundHandler";
 
@@ -35,7 +36,11 @@ app.use(notFoundHandler);
 
 app.use(errorHandler);
 
+const optionsHTTPS = {
+  key: fs.readFileSync(String(process.env.RUTA_KEY)),
+  cert: fs.readFileSync(String(process.env.RUTA_CERTIFICADO)),
+};
 // Iniciar el servidor
-app.listen(port, () => {
-  console.log(`Servidor corriendo en el puerto:${port}`);
+https.createServer(optionsHTTPS, app).listen(port, () => {
+  console.log("Server listening on port:", port);
 });
