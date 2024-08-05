@@ -46,7 +46,7 @@ WHERE c.cliente_id = ? AND t.deleted = ? AND c.status != ?;
     SELECT *, ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY quantity DESC) AS rn
     FROM cart_items )
        SELECT ci.product_id, ci.quantity, p.url, p.name FROM RankedProducts ci
-       JOIN products p ON ci.product_id = p.id WHERE ci.rn = 1`,
+       JOIN products p ON ci.product_id = p.id WHERE ci.rn = 1 AND p.deleted=0`,
         (error: any, results) => {
           if (error) {
             reject(error);

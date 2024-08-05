@@ -123,7 +123,7 @@ export class ProductRepository {
   }
 
   public static async deleteProduct(product_id: number): Promise<boolean> {
-    const query = 'DELETE FROM products WHERE id = ?';
+    const query = 'UPDATE products SET deleted=1  WHERE id = ?';
     return new Promise((resolve, reject) => {
       connection.execute(query, [product_id], (error, result: ResultSetHeader) => {
         if (error) {
