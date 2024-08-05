@@ -35,12 +35,16 @@ app.use("/api/voucher", voucherRoutes); // Agregar rutas de voucher
 app.use(notFoundHandler);
 
 app.use(errorHandler);
-
+/*
 const optionsHTTPS = {
   key: fs.readFileSync(String(process.env.RUTA_KEY)),
   cert: fs.readFileSync(String(process.env.RUTA_CERTIFICADO)),
 };
-// Iniciar el servidor
+
 https.createServer(optionsHTTPS, app).listen(port, () => {
+  console.log("Server listening on port:", port);
+});
+*/
+app.listen(port, () => {
   console.log("Server listening on port:", port);
 });

@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import productService from "../services/productService";
 
 export const getProducts = async (_req: Request, res: Response) => {
+  console.log(33);
+  
   try {
     const products = await productService.getAllProducts();
     if (products.length > 0) {

@@ -75,8 +75,8 @@ export class VoucherRepository {
       FROM vouchers v JOIN carts c ON v.id_cart = c.id
       JOIN cart_items ci ON c.id = ci.cart_id JOIN
       products p ON ci.product_id = p.id
-      WHERE v.status = 'pending' and v.id =? and c.status =? and ci.cart_id =v.id_cart and ci.deleted = 0`,
-       [voucher_id,"En proceso"], (error: any, results) => {
+      WHERE v.status = 'pending' and v.id =? and ci.cart_id =v.id_cart and ci.deleted = 0`,
+       [voucher_id], (error: any, results) => {
         if (error) {
           reject(error);
         } else {
